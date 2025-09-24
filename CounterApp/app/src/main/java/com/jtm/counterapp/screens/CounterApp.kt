@@ -13,18 +13,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.jtm.counterapp.viewmodels.CounterViewModel
 
 //Initial Composition --> When I starts the application
 //Recomposition --> Always take action to every change of the variable
 @Composable
 fun CounterApp(modifier: Modifier = Modifier) {
-    var counter : MutableState<Int> = remember {
-        mutableStateOf(0)
-    }
+   val counterViewMode : CounterViewModel = viewModel()
     Column (
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -32,11 +33,11 @@ fun CounterApp(modifier: Modifier = Modifier) {
     ){
         Log.d("CounterApp", "CounterApp: recompose")
         Text(text = "You Have pushed the button this many times")
-        Text(text = "${counter.value}", style = MaterialTheme.typography.headlineLarge)
+        Text(text = "${counterViewMode.counter}", style = MaterialTheme.typography.headlineLarge)
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            Log.d("CounterApp", "CounterApp: ${counter.value}")
-            counter.value++
+            //Log.d("CounterApp", "CounterApp: ${counter.value}")
+            counterViewMode.incrementCounter()
         }) {
             Text(text = "Push Me")
         }
