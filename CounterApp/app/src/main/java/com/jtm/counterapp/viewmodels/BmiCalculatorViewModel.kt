@@ -1,17 +1,20 @@
 package com.jtm.counterapp.viewmodels
 
 import android.annotation.SuppressLint
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class BmiCalculatorViewModel : ViewModel() {
 
-    var weight by mutableStateOf("")
-    var height by mutableStateOf("")
-    var bmi by mutableStateOf("")
-    var status by mutableStateOf("")
+    val bmiUiState = mutableStateOf(BmiUiState())
+
+    fun updateWeight(weight: String) {
+        bmiUiState.value = bmiUiState.value.copy(weight = weight)
+    }
+
+    fun updateHeight(height: String) {
+        bmiUiState.value = bmiUiState.value.copy(height = height)
+    }
 
     private fun getBMIStatus(bmi: Double): String {
         return when (bmi) {
@@ -29,11 +32,11 @@ class BmiCalculatorViewModel : ViewModel() {
 
     @SuppressLint("DefaultLocale")
     fun calculateBmi() {
-        val weight = weight.toDoubleOrNull() ?: 0.0
-        val height = height.toDoubleOrNull() ?: 0.0
+        val weight = bmiUiState.value.weight.toDoubleOrNull() ?: 0.0
+        val height = bmiUiState.value.height.toDoubleOrNull() ?: 0.0
         val bmiDouble = weight / (height * height)
-        bmi = String.format("%.1f", bmiDouble)
-        status = getBMIStatus(bmiDouble)
+        bmiUiState.value = bmiUiState.value.copy(bmi = String.format("%.2f", bmiDouble))
+        bmiUiState.value = bmiUiState.value.copy(status = getBMIStatus(bmiDouble))
     }
 
 
@@ -59,3 +62,11 @@ class BmiCalculatorViewModel : ViewModel() {
         )
     }
 }
+
+data class BmiUiState(
+    val weight: String = "",
+    val height: String = "",
+    val bmi: String = "",
+    val status: String = ""
+)
+

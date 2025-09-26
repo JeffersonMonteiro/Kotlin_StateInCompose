@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jtm.counterapp.R
 import com.jtm.counterapp.viewmodels.BmiCalculatorViewModel
-import com.jtm.counterapp.viewmodels.BmiCalculatorViewModel.Companion.statusMap
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +43,7 @@ fun BmiCalculatorPage(modifier: Modifier = Modifier) {
         }
     ) {
         val bmiCalculatorViewModel: BmiCalculatorViewModel = viewModel()
+        val uiState = bmiCalculatorViewModel.bmiUiState.value
 
         Column(
             modifier = modifier.padding(it),
@@ -57,27 +57,23 @@ fun BmiCalculatorPage(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(30.dp))
             EditNumberField(
-                value = bmiCalculatorViewModel.weight,
+                value = uiState.weight,
                 label = "Weight in (Kg)",
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
                 ),
-                onValueChanged = {
-                    bmiCalculatorViewModel.weight = it
-                }
+                onValueChanged = bmiCalculatorViewModel::updateWeight
             )
 
             EditNumberField(
-                value = bmiCalculatorViewModel.height,
+                value = uiState.height,
                 label = "Height in Meter",
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                onValueChanged = {
-                    bmiCalculatorViewModel.height = it
-                }
+                onValueChanged = bmiCalculatorViewModel::updateHeight
             )
 
             Button(
@@ -88,8 +84,8 @@ fun BmiCalculatorPage(modifier: Modifier = Modifier) {
                 Text(text = "Calculate")
             }
             BmiResult(
-                bmi = bmiCalculatorViewModel.bmi,
-                status = bmiCalculatorViewModel.status,
+                bmi = uiState.bmi,
+                status = uiState.status,
                 modifier = Modifier.weight(1.5f),
                 statusMap =  BmiCalculatorViewModel.statusMap
             )
